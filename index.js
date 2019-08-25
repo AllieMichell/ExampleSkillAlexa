@@ -1228,7 +1228,7 @@ const HelpIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-        const speakOutput = 'You can say hello to me! How can I help?';
+        const speakOutput = 'Puedo ayudarte si me dices que trivia deseas jugar como, Ciencias, Historia y Geografía, o puedes decir cancela para finalizar sesión';
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -1242,7 +1242,9 @@ const CancelAndStopIntentHandler = {
             && (Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
                 || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
     },
-    handle(handlerInput) {
+     async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput); 
         const speakOutput = 'Regresa pronto!';
         if(aplSupport) {
             return responseBuilder
