@@ -37,7 +37,7 @@ module.exports = {
             "question" : "¿Cuál es la parte mas seca de la tierra?", 
             "optiona":"America del Norte",
             "optionb":"America del sur",
-            "optionc":"La antartida", //correcto
+            "optionc":"La Antártida", //correcto
             "optiond":"Asia"
         },
         {

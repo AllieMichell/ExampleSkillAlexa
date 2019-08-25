@@ -158,7 +158,7 @@
                                     },
                                     {
                                         "type": "Text",
-                                        "text": "<b>Trivia</b>",
+                                        "text": "<b>Juego</b>",
                                         "style": "textStylePrimary",
                                         "color": "#ff354f",
                                         "width": "90vw",
@@ -244,7 +244,7 @@
                                         "items": [
                                             {
                                                 "type": "Text",
-                                                "text": "<b>Trivia</b>",
+                                                "text": "<b>Juego</b>",
                                                 "style": "textStylePrimary",
                                                 "color": "#ff354f"
                                             },

@@ -9,6 +9,7 @@ function path(url){
     datos = require(url);
     return datos;
 }
+
 function supportsAPL (handlerInput){ 
     const supportedInterfaces = 
     handlerInput.requestEnvelope.context.System.device.supportedInterfaces;
@@ -31,7 +32,7 @@ const LaunchRequestHandler = {
         const { responseBuilder } = handlerInput;
         const aplSupport = supportsAPL(handlerInput);
 
-        var speakText = 'Hola bienvenido a  mi Trivia, cuentas con las trivias: Historia de México, Ciencias naturales y Geografía, ¿Con cual deceas comenzar?';
+        var speakText = 'Hola bienvenido a  Triviate, cuentas con las trivias: Historia de México, Ciencias naturales y Geografía, ¿Con cual deceas comenzar?';
         var speakRepromp = 'Cuentas con las trivias: Historia de México, Ciencias naturales y Geografía, ¿Con cual deceas comenzar?';
         var speakView = 'Historia, Ciencias y Geografía'; 
 
@@ -79,6 +80,8 @@ const GeografíaIntentHandler ={
 
         const request = handlerInput.requestEnvelope.request;
         var respuestag = request.intent.slots.answerTrivia.value;
+        var bgimg = '';
+        var bgpngimg = '';
         var speakText = '';
         var speakRepromp = ''; 
         var speakView = ''; 
@@ -87,6 +90,8 @@ const GeografíaIntentHandler ={
                 speakText = 'Has seleccionado Historia de México, puedes decirme dame pregunta uno';
                 speakRepromp = 'Puedes decierme dame pregunta dos';
                 speakView = 'Historia de México'
+                bgimg = 'https://imagestrivia.s3.amazonaws.com/historia-fondo.png';
+                bgpngimg = 'https://imagestrivia.s3.amazonaws.com/png-historia.png';
                 path('./Trivias/historia');
 
                 break; 
@@ -94,12 +99,16 @@ const GeografíaIntentHandler ={
                 speakText = 'Has seleccionado ciencias naturales, puedes decirme dame pregunta uno';
                 speakRepromp = 'Puedes decierme dame pregunta tres';
                 speakView = 'Ciencias Naturales'
-                path('./Trivias/historia');
+                bgimg = 'https://imagestrivia.s3.amazonaws.com/ciencias-fondo.png';
+                bgpngimg = 'https://imagestrivia.s3.amazonaws.com/png-ciencias.png'
+                path('./Trivias/ciencias');
                 break; 
             case 'geografía':
                 speakText = 'Has seleccionado geografía, puedes decirme dame pregunta uno';
                 speakRepromp = 'Puedes decierme dame pregunta cuatro';
                 speakView = 'Geografía'
+                bgimg = 'https://imagestrivia.s3.amazonaws.com/geo-fondo.png'
+                bgpngimg = 'https://imagestrivia.s3.amazonaws.com/png-geograf%C3%ADa.png'
                 path('./Trivias/geografia');
                 break; 
             default: 
@@ -116,9 +125,9 @@ const GeografíaIntentHandler ={
                     bodyTemplate3Data: {
                         type: 'object', 
                         content: {
-                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            backgroundImage: bgimg,
                             title: 'Triviate', 
-                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            imageSmall: bgpngimg,
                             subtitle: '', 
                             primaryText: speakView,
                             bulletPoint: '',
@@ -312,10 +321,10 @@ const A2IntentHandler ={
         speakView = '';
 
         if(answer == datos.preguntas[1].optiona){
-            speechText = 'Tu respuesta es correcta!';
+            speakText = 'Tu respuesta es correcta!';
             speakView = 'Correcto';
         } else {
-            speechText = 'Tu respuesta es incorrecta!'
+            speakText = 'Tu respuesta es incorrecta!'
             speakView = 'Incorrecto'
         }
         if(aplSupport) {
@@ -420,7 +429,7 @@ const A3IntentHandler ={
         if(answer == datos.preguntas[2].optionb){
             speakText = 'Tu respuesta es correcta!';
             speakView = 'Correcto;'
-        } else {
+        } else if( answer != datos.preguntas[2].optionb) {
             speakText = 'Tu respuesta es incorrecta!';
             speakView = 'Incorrecto';
         }
