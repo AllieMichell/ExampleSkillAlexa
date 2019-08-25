@@ -8,29 +8,31 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Hola bienvenido a Trivia Te, di comenzar para empezar una trivia';
+        const speakOutput = 'Hola bienvenido a Trivia Te, cuentas con las trivias: Historia de México, Ciencias naturales y Geografía, ¿Con cual deceas comenzar?';
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
             .getResponse();
     }
 };
-const PreguntaIntentHandler ={
+const GeografíaIntentHandler ={
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionIntent';
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'geoIntent';
     },
-    async(handlerInput) {
+    handle(handlerInput) {
 
-        const requesta = handlerInput.requestEnvelope.request;
-        var respuesta = request.intent.slots.answer.value;
+        const request = handlerInput.requestEnvelope.request;
+        var respuestag = request.intent.slots.respuestageo.value;
         var speechText = '';
-         if(respuesta =='ballena'){
-            speechText = 'Correcto muchas felicidades'
-         }
-         else{
-             speechText = 'Incorrecto, intentalo de nuevo'
-         }
+        
+        if(respuestag == 'estados unidos'){
+            speechText = 'Correcto, respondiste bien'
+        } 
+        else{
+            speechText = 'Incorrecto'
+        }
+    
 
          return handlerInput.responseBuilder
             .speak(speechText)
@@ -38,6 +40,353 @@ const PreguntaIntentHandler ={
             .getResponse();
     }
 };
+
+
+const PreguntaIntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionIntent';
+    },
+    handle(handlerInput) {
+
+        const requesta = handlerInput.requestEnvelope.request;
+        var respuesta = request.intent.slots.answer.value;
+        var speechText = respuesta;
+
+        //  if(respuesta =='ballena'){
+        //     speechText = 'Correcto muchas felicidades'
+        //  }
+        //  else{
+        //      speechText = 'Incorrecto, intentalo de nuevo'
+        //  }
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+const Q1IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionOne';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A1IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerOne';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q2IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionTwo';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+const A2IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerTwo';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q3IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionThree';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A3IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerThree';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q4IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionFour';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A4IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerFour';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q5IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionFive';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A5IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerFive';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q6IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionSix';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A6IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerSix';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q7IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionSeven';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A7IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerSeven';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q8IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionEight';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A8IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerEight';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q9IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionNine';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A9IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerNine';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const Q10IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionTen';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+const A10IntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerTen';
+    },
+    handle(handlerInput) {
+
+      
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
+            .getResponse();
+    }
+};
+
+
+
 const HelloWorldIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
@@ -133,6 +482,27 @@ exports.handler = Alexa.SkillBuilders.custom()
         LaunchRequestHandler,
         HelloWorldIntentHandler,
         PreguntaIntentHandler,
+        A1IntentHandler,
+        Q1IntentHandler,
+        A2IntentHandler,
+        Q2IntentHandler,
+        A3IntentHandler,
+        Q3IntentHandler,
+        A4IntentHandler,
+        Q4IntentHandler,
+        A5IntentHandler,
+        Q5IntentHandler,
+        A6IntentHandler,
+        Q6IntentHandler,
+        A7IntentHandler,
+        Q7IntentHandler,
+        A8IntentHandler,
+        Q8IntentHandler,
+        A9IntentHandler,
+        Q9IntentHandler,
+        A10IntentHandler,
+        Q10IntentHandler,
+        GeografíaIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
