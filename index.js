@@ -2,102 +2,190 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require('ask-sdk-core');
-// const datos = require('./Trivias/historia');
-// const datos = require('./Trivias/geografia');
-
+var triviaAPL = require('./APL/aplQ.json')
 var datos;
 
 function path(url){
     datos = require(url);
     return datos;
 }
+function supportsAPL (handlerInput){ 
+    const supportedInterfaces = 
+    handlerInput.requestEnvelope.context.System.device.supportedInterfaces;
+    const aplInterface = supportedInterfaces['Alexa.Presentation.APL'];
+    return aplInterface != null && aplInterface != undefined; 
+}
+
+function allowedpermissions (handlerInput) {
+    const { requestEnvelope } = handlerInput;
+    const consentToken = requestEnvelope.context.System.user.permissions
+      && requestEnvelope.context.System.user.permissions.consentToken;
+    return consentToken != null && consentToken != undefined; 
+};
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
-    handle(handlerInput) {
-        const speakOutput = 'Hola bienvenido a Trivia Te, cuentas con las trivias: Historia de México, Ciencias naturales y Geografía, ¿Con cual deceas comenzar?';
-        return handlerInput.responseBuilder
-            .speak(speakOutput)
-            .reprompt(speakOutput)
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
+        var speakText = 'Hola bienvenido a  mi Trivia, cuentas con las trivias: Historia de México, Ciencias naturales y Geografía, ¿Con cual deceas comenzar?';
+        var speakRepromp = 'Cuentas con las trivias: Historia de México, Ciencias naturales y Geografía, ¿Con cual deceas comenzar?';
+        var speakView = 'Historia, Ciencias y Geografía'; 
+
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
+
+
 const GeografíaIntentHandler ={
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'triviaDesicion';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
 
         const request = handlerInput.requestEnvelope.request;
         var respuestag = request.intent.slots.answerTrivia.value;
-        var speechText = '';
+        var speakText = '';
+        var speakRepromp = ''; 
+        var speakView = ''; 
         switch(respuestag){
             case 'historia':
-                // speechText = 'Has seleccionado Historia de México, puedes decirme dame pregunta uno';
+                speakText = 'Has seleccionado Historia de México, puedes decirme dame pregunta uno';
+                speakRepromp = 'Puedes decierme dame pregunta dos';
+                speakView = 'Historia de México'
                 path('./Trivias/historia');
 
                 break; 
             case 'ciencias': 
-                speechText = 'Has seleccionado ciencias naturales, puedes decirme dame pregunta uno';
+                speakText = 'Has seleccionado ciencias naturales, puedes decirme dame pregunta uno';
+                speakRepromp = 'Puedes decierme dame pregunta tres';
+                speakView = 'Ciencias Naturales'
                 path('./Trivias/historia');
                 break; 
             case 'geografía':
-                speechText = 'Has seleccionado geografía, puedes decirme dame pregunta uno';
+                speakText = 'Has seleccionado geografía, puedes decirme dame pregunta uno';
+                speakRepromp = 'Puedes decierme dame pregunta cuatro';
+                speakView = 'Geografía'
                 path('./Trivias/geografia');
                 break; 
             default: 
-                speechText = 'No contamos con esa trivia';
+                speakText = 'No contamos con esa trivia';
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
-
-const PreguntaIntentHandler ={
-    canHandle(handlerInput) {
-        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionIntent';
-    },
-    handle(handlerInput) {
-
-        const requesta = handlerInput.requestEnvelope.request;
-        var respuesta = request.intent.slots.answer.value;
-        var speechText = respuesta;
-
-        //  if(respuesta =='ballena'){
-        //     speechText = 'Correcto muchas felicidades'
-        //  }
-        //  else{
-        //      speechText = 'Incorrecto, intentalo de nuevo'
-        //  }
-
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
-            .getResponse();
-    }
-};
 const Q1IntentHandler ={
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionOne';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         question = datos.preguntas[0].question
         optiona = datos.preguntas[0].optiona
         optionb = datos.preguntas[0].optionb
         optionc = datos.preguntas[0].optionc
         optiond = datos.preguntas[0].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
+         
     }
 };
 
@@ -106,19 +194,54 @@ const A1IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerOne';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansOne.value;
-        var speechText = '';
+
+        speakText = '';
+        speakRepromp = 'Para continuar puedes decirme pregunta dos';
+        speakView = '';
+
         if(answer == datos.preguntas[0].optiona){
-            speechText = `Estas en lo correcto!, ${answer}`
+            speakText = 'Tu respuesta es correcta!';
+            speakView = 'Correcto';
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta!';
+            speakView = 'Incorrecto';
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -127,16 +250,49 @@ const Q2IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionTwo';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         question = datos.preguntas[1].question
         optiona = datos.preguntas[1].optiona
         optionb = datos.preguntas[1].optionb
         optionc = datos.preguntas[1].optionc
         optiond = datos.preguntas[1].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)            
-            .reprompt('Intentalo de nuevo')
+
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 const A2IntentHandler ={
@@ -144,19 +300,53 @@ const A2IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerTwo';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansTwo.value;
-        var speechText = '';
+
+        speakText = '';
+        speakRepromp = 'Para continuar puedes decirme pregunta tres';
+        speakView = '';
+
         if(answer == datos.preguntas[1].optiona){
-            speechText = `Estas en lo correcto! ${answer}`
+            speechText = 'Tu respuesta es correcta!';
+            speakView = 'Correcto';
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speechText = 'Tu respuesta es incorrecta!'
+            speakView = 'Incorrecto'
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -165,16 +355,49 @@ const Q3IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionThree';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         question = datos.preguntas[2].question
         optiona = datos.preguntas[2].optiona
         optionb = datos.preguntas[2].optionb
         optionc = datos.preguntas[2].optionc
         optiond = datos.preguntas[2].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`; ; 
+
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -183,19 +406,53 @@ const A3IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerThree';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansThree.value;
-        var speechText = '';
+
+        var speakText = '';
+        var speakRepromp = 'Para continuar puedes decirme pregunta cuatro'; 
+        var speakView = '';
+
         if(answer == datos.preguntas[2].optionb){
-            speechText = `Estas en lo correcto! ${answer}`
+            speakText = 'Tu respuesta es correcta!';
+            speakView = 'Correcto;'
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta!';
+            speakView = 'Incorrecto';
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -204,16 +461,49 @@ const Q4IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionFour';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         question = datos.preguntas[3].question
         optiona = datos.preguntas[3].optiona
         optionb = datos.preguntas[3].optionb
         optionc = datos.preguntas[3].optionc
         optiond = datos.preguntas[3].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakRepromp =  `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -222,19 +512,53 @@ const A4IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerFour';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansFour.value;
-        var speechText = '';
+
+        speakText = '';
+        speakRepromp = 'Para continuar puedes decirme pregunta cinco';
+        speakView = '';
+
         if(answer == datos.preguntas[3].optiona){
-            speechText = `Estas en lo correcto! ${answer}`
+            speakText = 'Tu respuesta es correcta!'; 
+            speakView = 'Correcto'; 
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta!'; 
+            speakView = 'Incorrecto;'
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -243,16 +567,49 @@ const Q5IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionFive';
     },
-    handle(handlerInput) {
+     async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         question = datos.preguntas[4].question
         optiona = datos.preguntas[4].optiona
         optionb = datos.preguntas[4].optionb
         optionc = datos.preguntas[4].optionc
         optiond = datos.preguntas[4].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}` ;
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -261,19 +618,53 @@ const A5IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerFive';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansFive.value;
-        var speechText = '';
+
+        speakText = '';
+        speakRepromp = 'Para continuar pudes decirme pregunta seis';
+        speakView = '';
+
         if(answer == datos.preguntas[4].optionc){
-            speechText = `Estas en lo correcto! ${answer}`
+            speakText = 'Tu respuesta es correcta!'; 
+            speakView = 'Correcto'; 
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta!'; 
+            speakView = 'Incorrecto';
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -282,16 +673,49 @@ const Q6IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionSix';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+        
         question = datos.preguntas[5].question
         optiona = datos.preguntas[5].optiona
         optionb = datos.preguntas[5].optionb
         optionc = datos.preguntas[5].optionc
         optiond = datos.preguntas[5].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+
+        speakText =`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -300,18 +724,53 @@ const A6IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerSix';
     },
-    handle(handlerInput) {const request = handlerInput.requestEnvelope.request;
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
+        const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansSix.value;
-        var speechText = '';
+
+        speakText = '';
+        speakRepromp = 'Para continuar puedes decirme pregunta siete';
+        speakView = '';
+
         if(answer == datos.preguntas[5].optionb){
-            speechText = `Estas en lo correcto! ${answer}`
+            speakText = 'Tu respuesta es correcta!'
+            speakView = 'Correcto';
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta'
+            speakView = 'Incorrecto';
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -320,16 +779,49 @@ const Q7IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionSeven';
     },
-    handle(handlerInput) {
+     async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         question = datos.preguntas[6].question
         optiona = datos.preguntas[6].optiona
         optionb = datos.preguntas[6].optionb
         optionc = datos.preguntas[6].optionc
         optiond = datos.preguntas[6].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -338,18 +830,53 @@ const A7IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerSeven';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
+        const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansSix.value;
-        var speechText = '';
+
+        speakText = '';        
+        speakRepromp = 'Para coninuar pudes decirme pregunta ocho'; 
+        speakView = ''; 
+
         if(answer == datos.preguntas[6].optiond){
-            speechText = `Estas en lo correcto! ${answer}`
+            speakText = 'Tu respuesta es correcta!'; 
+            speakView = 'Correcto'; 
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta!'; 
+            speakView = 'Incorrecto';
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -358,16 +885,50 @@ const Q8IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionEight';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput); 
+
         question = datos.preguntas[7].question
         optiona = datos.preguntas[7].optiona
         optionb = datos.preguntas[7].optionb
         optionc = datos.preguntas[7].optionc
         optiond = datos.preguntas[7].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        
+        
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -376,18 +937,53 @@ const A8IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerEight';
     },
-    handle(handlerInput) {
+     async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
+        const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansSix.value;
-        var speechText = '';
+
+        speakText = '';
+        speakRepromp = 'Para continuar pudes decirme pregunta nueve';
+        speakView = '';
+
         if(answer == datos.preguntas[7].optiona){
-            speechText = `Estas en lo correcto! ${answer}`
+            speakText = 'Tu respuesta es correcta!'; 
+            speakView = 'Correcto'; 
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta!'
+            speakView = 'Incorrecto';
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -396,16 +992,49 @@ const Q9IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionNine';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput); 
+
         question = datos.preguntas[8].question
         optiona = datos.preguntas[8].optiona
         optionb = datos.preguntas[8].optionb
         optionc = datos.preguntas[8].optionc
         optiond = datos.preguntas[8].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+        
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+         
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -414,18 +1043,53 @@ const A9IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerNine';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
+        const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansSix.value;
-        var speechText = '';
+
+        speakText = '';
+        speakRepromp = '';
+        speakView = '';
+
         if(answer == datos.preguntas[8].optionc){
-            speechText = `Estas en lo correcto! ${answer}`
+            speakText = 'Tu respuesta es correcta!'; 
+            speakView = 'Correcto'
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta!'
+            speakView = 'Incorrecto;'
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -434,16 +1098,49 @@ const Q10IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionTen';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput);
+
         question = datos.preguntas[9].question
         optiona = datos.preguntas[9].optiona
         optionb = datos.preguntas[9].optionb
         optionc = datos.preguntas[9].optionc
         optiond = datos.preguntas[9].optiond
-         return handlerInput.responseBuilder
-            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
-            .reprompt('Intentalo de nuevo')
+        
+        speakText = `${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`; 
+        speakRepromp = `Tienes como opciones ${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+        speakView = `${optiona}, ${optionb}, ${optionc}, o ${optiond}`;
+
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -452,18 +1149,52 @@ const A10IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerTen';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
+        const { responseBuilder } = handlerInput;
+        const aplSupport = supportsAPL(handlerInput); 
+
+        const request = handlerInput.requestEnvelope.request;
         var answer = request.intent.slots.ansSix.value;
-        var speechText = '';
+
+        speakText = '';
+        speakRepromp = 'Relicidades has concluido la trivia';
+        speakView = '';
         if(answer == datos.preguntas[9].optiona){
-            speechText = `Estas en lo correcto! ${answer}`
+            speakText = 'Tu respuesta es correcta'; 
+            speakView = 'Felicidades!'
         } else {
-            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+            speakText = 'Tu respuesta es incorrecta!'; 
+            speakView = 'Puedes intentarlo nuevamente iniciando la trivia';
         }
-         return handlerInput.responseBuilder
-            .speak(speechText)
-            .reprompt('Intentalo de nuevo')
+        if(aplSupport) {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakView,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 
@@ -504,9 +1235,35 @@ const CancelAndStopIntentHandler = {
     },
     handle(handlerInput) {
         const speakOutput = 'Regresa pronto!';
-        return handlerInput.responseBuilder
+        if(aplSupport) {
+            return responseBuilder
             .speak(speakOutput)
+            .reprompt(speakOutput)
+            .addDirective({
+                type: 'Alexa.Presentation.APL.RenderDocument',
+                document: triviaAPL, 
+                datasources: {
+                    bodyTemplate3Data: {
+                        type: 'object', 
+                        content: {
+                            backgroundImage: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            title: 'Triviate', 
+                            imageSmall: 'https://imagestrivia.s3.amazonaws.com/ch1.png',
+                            subtitle: '', 
+                            primaryText: speakOutput,
+                            bulletPoint: '',
+                            logoUrl: 'https://imagestrivia.s3.amazonaws.com/triviat.png'
+                        }
+                    }
+                }
+            })
             .getResponse();
+        } else {
+            return responseBuilder
+            .speak(speakText)
+            .reprompt(speakRepromp)
+            .getResponse();
+        }
     }
 };
 const SessionEndedRequestHandler = {
@@ -563,7 +1320,6 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
         HelloWorldIntentHandler,
-        PreguntaIntentHandler,
         A1IntentHandler,
         Q1IntentHandler,
         A2IntentHandler,
