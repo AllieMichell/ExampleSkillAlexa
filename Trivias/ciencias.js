@@ -11,46 +11,46 @@ module.exports = {
         {
             // PREGUNTA 2
             "question" : "¿Con qué respira una ballena?", 
-            "optiona":"pulmones", //correcta
-            "optionb":"branquias",
+            "optiona":"Pulmones", //correcta
+            "optionb":"Branquias",
             "optionc":"Piel", 
-            "optiond":"lengua"
+            "optiond":"Lengua"
         },
         {
             // PREGUNTA 3
             "question" : "Para los botánicos, el tomate es una:", 
-            "optiona":"hortaliza",
-            "optionb":"fruta", //correcta
+            "optiona":"Hortaliza",
+            "optionb":"Fruta", //correcta
             "optionc":"Verdura",
-            "optiond":"leguminoza"
+            "optiond":"Leguminoza"
         },
         {
             // PREGUNTA 4
             "question" : "La fuerza física que la tierra ejerce sobre los cuerpos hacia su centro es la:", 
-            "optiona":"gravedad",//correcta
-            "optionb":"normal",
-            "optionc":"potencia",
-            "optiond":"velocidad" 
+            "optiona":"Gravedad",//correcta
+            "optionb":"Normal",
+            "optionc":"Potencia",
+            "optiond":"Velocidad" 
         },
         {
             // PREGUNTA 5
             "question" : "El sol es...", 
             "optiona":"Un presidente",
-            "optionb":" un planeta",
-            "optionc":"una estrella", //correcto
-            "optiond":"una galaxia"
+            "optionb":"Un planeta",
+            "optionc":"Una estrella", //correcto
+            "optiond":"Una galaxia"
         },
         {
             // PREGUNTA 6
             "question" : "¿Qué tipo de radiación te produce quemaduras?", 
-            "optiona":"rayos x",
-            "optionb":"ultravioleta", //correcto
-            "optionc":"infrarojo",
-            "optiond":"solar"
+            "optiona":"Rayos x",
+            "optionb":"Ultravioleta", //correcto
+            "optionc":"Infrarojo",
+            "optiond":"Solar"
         },
         {
             // PREGUNTA 7
-            "question" : "¿¿Cuál fue el primer metal que el hombre empleó?", 
+            "question" : "¿Cuál fue el primer metal que el hombre empleó?", 
             "optiona":"El acero",
             "optionb":"El bibranio",
             "optionc":"El oro",
@@ -59,26 +59,26 @@ module.exports = {
         {
              // PREGUNTA 8
             "question" : "¿Cómo se llama el proceso por el cual las plantas elaboran su alimento?", 
-            "optiona":"fotosíntesis", //correcta
-            "optionb":"polinización",
-            "optionc":"purga",
-            "optiond":"gestación"
+            "optiona":"Fotosíntesis", //correcta
+            "optionb":"Polinización",
+            "optionc":"Purga",
+            "optiond":"Gestación"
         },
         {
             // PREGUNTA 9
             "question" : "¿Cuál es el satelite más importante de la tierra?", 
-            "optiona":"el satelite jooper",
-            "optionb":"marte",
-            "optionc":"la luna", //correcta
-            "optiond":"el sol"
+            "optiona":"El satelite jooper",
+            "optionb":"Marte",
+            "optionc":"La luna", //correcta
+            "optiond":"El sol"
         },
         {
             // PREGUNTA 10
             "question" : "¿Cuál es la ciencia que estudia las estrellas?", 
-            "optiona":"astronomía", //correcta
-            "optionb":"medicina",
-            "optionc":"astronautica",
-            "optiond":"la física"
+            "optiona":"Astronomía", //correcta
+            "optionb":"Medicina",
+            "optionc":"Astronautica",
+            "optiond":"La física"
         }
     ]
 }

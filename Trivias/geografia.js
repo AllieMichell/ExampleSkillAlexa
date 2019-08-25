@@ -3,10 +3,10 @@ module.exports = {
         {
             // PREGUNTA 1
             "question" : "¿Cuál es el rio mas largo del mundo?", 
-            "optiona":"nilo", //correcta
+            "optiona":"Nilo", //correcta
             "optionb":"Amazonas",
             "optionc":"Bravo",
-            "optiond":"rio grande"
+            "optiond":"Rio grande"
         },
         {
             // PREGUNTA 2
@@ -52,7 +52,7 @@ module.exports = {
             // PREGUNTA 7
             "question" : "¿Cuál es la montaña mas alta del mundo?", 
             "optiona":"Kilimanjaro",
-            "optionb":" K2",
+            "optionb":"K2",
             "optionc":"Makalu",
             "optiond":"Monte Everest" //correcto
         },
@@ -60,7 +60,7 @@ module.exports = {
             // PREGUNTA 8
             "question" : "¿Cuál es la capital de brazil?", 
             "optiona":"Brasilia", //correcta
-            "optionb":" Río de Janeiro",
+            "optionb":"Río de Janeiro",
             "optionc":"Sao Paulo",
             "optiond":"Mineiro"
         },

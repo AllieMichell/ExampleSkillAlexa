@@ -2,7 +2,7 @@ module.exports = {
     preguntas:[
         // PREGUNTA 1
         {
-            "question" : " ¿En que año descubrió colón América?", 
+            "question" : "¿En que año descubrió colón América?", 
             "optiona":"1492", //correcta
             "optionb":"1502",
             "optionc":"1496",
@@ -36,7 +36,7 @@ module.exports = {
             // PREGUNTA 5
             "question" : "Miguel Hidalgo era..", 
             "optiona":"Un presidente",
-            "optionb":" un CEO",
+            "optionb":"Un CEO",
             "optionc":"Un cura", //correcto
             "optiond":"Un soldado"
         },
@@ -60,7 +60,7 @@ module.exports = {
              // PREGUNTA 8
             "question" : "¿En qué lugar hay actualmente pinturas del mesolítico?", 
             "optiona":"España", //correcta
-            "optionb":" Grecia",
+            "optionb":"Grecia",
             "optionc":"Roma",
             "optiond":"Mexico"
         },
