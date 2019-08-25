@@ -8,10 +8,33 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Hola bienvenido a Trivia Te, ¿Tenemos muchos juegos para ti cual deceas jugar?';
+        const speakOutput = 'Hola bienvenido a Trivia Te, di comenzar para empezar una trivia';
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+const PreguntaIntentHandler ={
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionIntent';
+    },
+    async(handlerInput) {
+
+        const requesta = handlerInput.requestEnvelope.request;
+        var respuesta = request.intent.slots.answer.value;
+        var speechText = '';
+         if(respuesta =='ballena'){
+            speechText = 'Correcto muchas felicidades'
+         }
+         else{
+             speechText = 'Incorrecto, intentalo de nuevo'
+         }
+
+         return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt('Intentalo de nuevo')
             .getResponse();
     }
 };
@@ -109,6 +132,7 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
         HelloWorldIntentHandler,
+        PreguntaIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
