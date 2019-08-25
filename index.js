@@ -2,6 +2,15 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require('ask-sdk-core');
+// const datos = require('./Trivias/historia');
+// const datos = require('./Trivias/geografia');
+
+var datos;
+
+function path(url){
+    datos = require(url);
+    return datos;
+}
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -18,22 +27,30 @@ const LaunchRequestHandler = {
 const GeografíaIntentHandler ={
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'geoIntent';
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'triviaDesicion';
     },
     handle(handlerInput) {
 
         const request = handlerInput.requestEnvelope.request;
-        var respuestag = request.intent.slots.respuestageo.value;
+        var respuestag = request.intent.slots.answerTrivia.value;
         var speechText = '';
-        
-        if(respuestag == 'estados unidos'){
-            speechText = 'Correcto, respondiste bien'
-        } 
-        else{
-            speechText = 'Incorrecto'
-        }
-    
+        switch(respuestag){
+            case 'historia':
+                // speechText = 'Has seleccionado Historia de México, puedes decirme dame pregunta uno';
+                path('./Trivias/historia');
 
+                break; 
+            case 'ciencias': 
+                speechText = 'Has seleccionado ciencias naturales, puedes decirme dame pregunta uno';
+                path('./Trivias/historia');
+                break; 
+            case 'geografía':
+                speechText = 'Has seleccionado geografía, puedes decirme dame pregunta uno';
+                path('./Trivias/geografia');
+                break; 
+            default: 
+                speechText = 'No contamos con esa trivia';
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -72,11 +89,13 @@ const Q1IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionOne';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[0].question
+        optiona = datos.preguntas[0].optiona
+        optionb = datos.preguntas[0].optionb
+        optionc = datos.preguntas[0].optionc
+        optiond = datos.preguntas[0].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -88,9 +107,14 @@ const A1IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerOne';
     },
     handle(handlerInput) {
-
-      
-
+        const request = handlerInput.requestEnvelope.request;
+        var answer = request.intent.slots.ansOne.value;
+        var speechText = '';
+        if(answer == datos.preguntas[0].optiona){
+            speechText = `Estas en lo correcto!, ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -104,11 +128,13 @@ const Q2IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionTwo';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[1].question
+        optiona = datos.preguntas[1].optiona
+        optionb = datos.preguntas[1].optionb
+        optionc = datos.preguntas[1].optionc
+        optiond = datos.preguntas[1].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)            
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -119,9 +145,14 @@ const A2IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerTwo';
     },
     handle(handlerInput) {
-
-      
-
+        const request = handlerInput.requestEnvelope.request;
+        var answer = request.intent.slots.ansTwo.value;
+        var speechText = '';
+        if(answer == datos.preguntas[1].optiona){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -135,11 +166,13 @@ const Q3IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionThree';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[2].question
+        optiona = datos.preguntas[2].optiona
+        optionb = datos.preguntas[2].optionb
+        optionc = datos.preguntas[2].optionc
+        optiond = datos.preguntas[2].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -151,9 +184,14 @@ const A3IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerThree';
     },
     handle(handlerInput) {
-
-      
-
+        const request = handlerInput.requestEnvelope.request;
+        var answer = request.intent.slots.ansThree.value;
+        var speechText = '';
+        if(answer == datos.preguntas[2].optionb){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -167,11 +205,13 @@ const Q4IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionFour';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[3].question
+        optiona = datos.preguntas[3].optiona
+        optionb = datos.preguntas[3].optionb
+        optionc = datos.preguntas[3].optionc
+        optiond = datos.preguntas[3].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -183,9 +223,14 @@ const A4IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerFour';
     },
     handle(handlerInput) {
-
-      
-
+        const request = handlerInput.requestEnvelope.request;
+        var answer = request.intent.slots.ansFour.value;
+        var speechText = '';
+        if(answer == datos.preguntas[3].optiona){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -199,11 +244,13 @@ const Q5IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionFive';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[4].question
+        optiona = datos.preguntas[4].optiona
+        optionb = datos.preguntas[4].optionb
+        optionc = datos.preguntas[4].optionc
+        optiond = datos.preguntas[4].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -215,9 +262,14 @@ const A5IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerFive';
     },
     handle(handlerInput) {
-
-      
-
+        const request = handlerInput.requestEnvelope.request;
+        var answer = request.intent.slots.ansFive.value;
+        var speechText = '';
+        if(answer == datos.preguntas[4].optionc){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -231,11 +283,13 @@ const Q6IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionSix';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[5].question
+        optiona = datos.preguntas[5].optiona
+        optionb = datos.preguntas[5].optionb
+        optionc = datos.preguntas[5].optionc
+        optiond = datos.preguntas[5].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -246,10 +300,14 @@ const A6IntentHandler ={
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerSix';
     },
-    handle(handlerInput) {
-
-      
-
+    handle(handlerInput) {const request = handlerInput.requestEnvelope.request;
+        var answer = request.intent.slots.ansSix.value;
+        var speechText = '';
+        if(answer == datos.preguntas[5].optionb){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -263,11 +321,13 @@ const Q7IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionSeven';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[6].question
+        optiona = datos.preguntas[6].optiona
+        optionb = datos.preguntas[6].optionb
+        optionc = datos.preguntas[6].optionc
+        optiond = datos.preguntas[6].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -279,9 +339,13 @@ const A7IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerSeven';
     },
     handle(handlerInput) {
-
-      
-
+        var answer = request.intent.slots.ansSix.value;
+        var speechText = '';
+        if(answer == datos.preguntas[6].optiond){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -295,11 +359,13 @@ const Q8IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionEight';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[7].question
+        optiona = datos.preguntas[7].optiona
+        optionb = datos.preguntas[7].optionb
+        optionc = datos.preguntas[7].optionc
+        optiond = datos.preguntas[7].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -311,9 +377,13 @@ const A8IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerEight';
     },
     handle(handlerInput) {
-
-      
-
+        var answer = request.intent.slots.ansSix.value;
+        var speechText = '';
+        if(answer == datos.preguntas[7].optiona){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -327,11 +397,13 @@ const Q9IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionNine';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[8].question
+        optiona = datos.preguntas[8].optiona
+        optionb = datos.preguntas[8].optionb
+        optionc = datos.preguntas[8].optionc
+        optiond = datos.preguntas[8].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -343,9 +415,13 @@ const A9IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerNine';
     },
     handle(handlerInput) {
-
-      
-
+        var answer = request.intent.slots.ansSix.value;
+        var speechText = '';
+        if(answer == datos.preguntas[8].optionc){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -359,11 +435,13 @@ const Q10IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'questionTen';
     },
     handle(handlerInput) {
-
-      
-
+        question = datos.preguntas[9].question
+        optiona = datos.preguntas[9].optiona
+        optionb = datos.preguntas[9].optionb
+        optionc = datos.preguntas[9].optionc
+        optiond = datos.preguntas[9].optiond
          return handlerInput.responseBuilder
-            .speak(speechText)
+            .speak(`${question}, tus opciones son ${optiona}, ${optionb}, ${optionc}, o ${optiond}`)
             .reprompt('Intentalo de nuevo')
             .getResponse();
     }
@@ -375,9 +453,13 @@ const A10IntentHandler ={
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'answerTen';
     },
     handle(handlerInput) {
-
-      
-
+        var answer = request.intent.slots.ansSix.value;
+        var speechText = '';
+        if(answer == datos.preguntas[9].optiona){
+            speechText = `Estas en lo correcto! ${answer}`
+        } else {
+            speechText = `Lo siento, sigue intentando, ${answer} no es lo correcto`
+        }
          return handlerInput.responseBuilder
             .speak(speechText)
             .reprompt('Intentalo de nuevo')
@@ -421,7 +503,7 @@ const CancelAndStopIntentHandler = {
                 || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
     },
     handle(handlerInput) {
-        const speakOutput = 'Goodbye!';
+        const speakOutput = 'Regresa pronto!';
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .getResponse();
